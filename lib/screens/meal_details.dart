@@ -19,33 +19,60 @@ class MealDetailScreen extends ConsumerWidget {
         title: Text(meal.title),
         actions: [
           IconButton(
-            onPressed: () {
-              final wasAdded = ref
-                  .read(favoriteMealsProvider.notifier)
-                  .toggleMealsFavoriteStatus(meal);
-              ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(wasAdded
-                        ? 'Meal added as a favorite'
-                        : 'Meal removed')),
-              );
-              print(favMeal);
-            },
-            icon: favMeal
-                ? const Icon(Icons.favorite)
-                : const Icon(Icons.favorite_border_outlined),
-          ),
+              onPressed: () {
+                final wasAdded = ref
+                    .read(favoriteMealsProvider.notifier)
+                    .toggleMealsFavoriteStatus(meal);
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(wasAdded
+                          ? 'Meal added as a favorite'
+                          : 'Meal removed')),
+                );
+                print(favMeal);
+              },
+              icon:
+                  // AnimatedSwitcher(
+                  //   duration: const Duration(milliseconds: 300),
+                  //   transitionBuilder: (child, animation) {
+                  //     return RotationTransition(
+                  //         turns:
+                  //             Tween<double>(begin: 0.5, end: 1.0).animate(animation),
+                  //         child: child);
+                  //   },
+                  //   child: Icon(
+                  //     favMeal ? Icons.favorite : Icons.favorite_border_outlined,
+                  //     key: ValueKey(favMeal),
+                  //   ),
+                  // ),
+                  AnimatedCrossFade(
+                firstChild: const Icon(
+                  Icons.favorite_border_outlined,
+                  key: ValueKey(false),
+                ),
+                secondChild: const Icon(
+                  Icons.favorite,
+                  key: ValueKey(true),
+                ),
+                duration: const Duration(milliseconds: 500),
+                crossFadeState: favMeal
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+              )),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(
-              meal.imageUrl,
-              height: 300,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            Hero(
+              tag: meal.id,
+              child: Image.network(
+                meal.imageUrl,
+                height: 300,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(
               height: 14,
